@@ -95,7 +95,7 @@ export default function Light({ slug }) {
         {/* HERO */}
         <div
           className={`relative h-screen flex items-center justify-center text-center px-6 transition-all duration-1000 ease-out ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
-          <div className={`absolute inset-0 bg-[url('/${slug}/2.jpg')] bg-cover bg-center brightness-40`} />
+          <div className={`absolute inset-0 bg-cover bg-center brightness-40`} style={{backgroundImage: `url('/${slug}/2.jpg')`}} />
 
           <div className="relative z-10">
 
