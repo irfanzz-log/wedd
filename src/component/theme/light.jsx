@@ -2,37 +2,22 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import Countdown from '../../component/countdown';
-import { supabase } from '@/lib/clientConnection';
+import useCountdown from '../../hook/useCountdown';
+import useGetDataWedding from '../../hook/useGetDataWedding';
 import { notFound } from 'next/navigation';
 import { slugs } from '@/lib/db';
+import Image from 'next/image';
 
 export default function Light({ slug }) {
 
-  const [data, setData] = useState(null);
+  const data = useGetDataWedding(slug);
+  const photo = data?.photo
+  const photoRow = Array.from({ length: photo}, (_, i) => i + 1);
+  const timeLeft = useCountdown({ targetDate: data?.wedding_date });
 
   if(!slugs.includes(slug)) {
     notFound();
   }
-
-  async function fetchData() {
-    const { data, error } = await supabase
-      .from('wedding')
-      .select('*')
-      .eq('slug', slug)
-      .single();
-
-    if (error) {
-      console.error('Error fetching data:', error);
-    } else {
-      setData(data);
-      console.log('Data fetched successfully:', data);
-    }
-  }
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const timeDate = data?.wedding_date ? new Date(data.wedding_date) : null;
 
@@ -71,7 +56,7 @@ export default function Light({ slug }) {
         transition={{ duration: 1 }}
         viewport={{ once: true }}
         className={` transform-gpu relative h-screen items-center justify-center text-center px-6 transition-all duration-1000 ease-out ${isOpen ? 'hidden opacity-0' : 'opacity-100 flex'} backdrop-blur-sm`}>
-        <div className="absolute inset-0 bg-[url('/g2.jpeg')] bg-cover bg-center brightness-50" />
+        
 
         <div className="relative w-full z-10 flex-col items-center justify-center">
 
@@ -80,7 +65,7 @@ export default function Light({ slug }) {
           </p>
 
           <h1 className="text-6xl md:text-8xl font-serif mb-6 text-black">
-            {data?.groom_name} <span className="">&</span> {data?.bride_name}
+            {data?.groom_name || 'Groom Name'} <span className="">&</span> {data?.bride_name || 'Bride Name'}
           </h1>
 
           <p className="text-lg text-black mb-8">
@@ -110,19 +95,19 @@ export default function Light({ slug }) {
         {/* HERO */}
         <div
           className={`relative h-screen flex items-center justify-center text-center px-6 transition-all duration-1000 ease-out ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="absolute inset-0 bg-[url('/hero.jpeg')] bg-cover bg-center brightness-50" />
+          <div className={`absolute inset-0 bg-[url('/${slug}/2.jpg')] bg-cover bg-center brightness-40`} />
 
           <div className="relative z-10">
 
-            <p className="tracking-[0.4em] uppercase text-sm mb-4 text-black drop-shadow-xl">
+            <p className="tracking-[0.4em] uppercase text-sm mb-4 text-[#FFDBFD] drop-shadow-xl">
               Wedding Invitation
             </p>
 
-            <h1 className="text-6xl md:text-8xl font-serif mb-6 text-black drop-shadow-xl">
-              {data?.groom_name} <span className="">&</span> {data?.bride_name}
+            <h1 className="text-6xl md:text-8xl font-serif mb-6 text-[#FFDBFD] drop-shadow-xl">
+              {data?.groom_name || 'Groom Name'} <span className="">&</span> {data?.bride_name || 'Bride Name'}
             </h1>
 
-            <p className="text-lg text-black mb-8 drop-shadow-xl">
+            <p className="text-lg text-[#FFDBFD] mb-8 drop-shadow-xl">
               {timeDate ? timeDate.toLocaleDateString('id-ID', {
                 weekday: 'long',
                 year: 'numeric',
@@ -130,8 +115,7 @@ export default function Light({ slug }) {
                 day: 'numeric'
               }) : ''}
             </p>
-
-            <p className='text-serif text-sm drop-shadow-xl text-black'>Tanpa Mengurangi Rasa Hormat,
+            <p className='text-serif text-sm drop-shadow-xl text-[#FFDBFD]'>Tanpa Mengurangi Rasa Hormat,
               Kami Mengundang Bapak/Ibu/Saudara/i
               Untuk Hadir Di Acara Pernikahan Kami.</p>
           </div>
@@ -175,7 +159,7 @@ export default function Light({ slug }) {
                 <p className='font-great-vibes font-bold text-[#FFDBFD] text-4xl'>Pengantin</p>
               </div>
               <div className='my-5 w-full md:flex justify-center'>
-                <p className='text-[#505050] font-serif text-xs text-center md:text-xl md:w-1/3'>Maha Suci Allah SWT, Yang telah menciptakan makhlukNya berpasang-pasangan.
+                <p className='text-[#505050] font-serif text-xs text-center md:text-xl md:w-1/3'>Maha Suci Allah SWT, Yang telah menciptakan makhluknya berpasang-pasangan.
                   Ya Allah, perkenankanlah dan Ridhoilah Pernikahan kami.</p>
               </div>
             </div>
@@ -189,7 +173,7 @@ export default function Light({ slug }) {
                 className="transform-gpu text-center">
                 <div className="relative w-46 h-46 mx-auto mb-8">
                   <img
-                    src="/rian/men.png"
+                    src={`/${slug}/men.png`}
                     alt="Groom"
                     className="w-full h-full object-cover rounded-full"
                   />
@@ -203,10 +187,7 @@ export default function Light({ slug }) {
                   <div className='w-3/4 p-[0.2px] rounded-xl my-2 bg-black'>
                   </div>
                 </div>
-                <p className='text-[#505050] font-serif'>Anak Ketiga dari tiga bersaudara</p>
-                <p className="text-[#505050] font-serif">
-                  Bapak Racmat Fauzi (alm) & Ibu Dra. Windiarti
-                </p>
+                <p className='text-[#505050] font-serif'>{data?.groom_info || ''}</p>
               </motion.div>
 
               {/* Bride */}
@@ -218,7 +199,7 @@ export default function Light({ slug }) {
                 className="transform-gpu text-center">
                 <div className="relative w-46 h-46 mx-auto mb-8">
                   <img
-                    src="/rian/girl.png"
+                    src={`/${slug}/girl.png`}
                     alt="Bride"
                     className="w-full h-full object-cover rounded-full"
                   />
@@ -227,21 +208,56 @@ export default function Light({ slug }) {
                   </div>
                 </div>
 
-                <h2 className="text-4xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.bride_name || 'Bride Name'}</h2>
+                <h2 className="text-4xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.bride_name || ''}</h2>
                 <div className='w-full flex justify-center'>
                   <div className='w-3/4 p-[0.2px] rounded-xl my-2 bg-black'>
                   </div>
                 </div>
-                <p className='text-[#505050] font-serif'>Anak pertama dari dua bersaudara</p>
-                <p className="text-[#505050] font-serif">
-                  Bapak Riswanto & Ibu Rosmanah
-                </p>
+                <p className='text-[#505050] font-serif'>{data?.bride_info || ''}</p>
               </motion.div>
             </div>
           </motion.section>
         </div>
 
-        <Countdown targetDate={'2026-07-06T11:00:00'} />
+        <motion.section
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+          className={`transform-gpu relative py-28 px-6 bg-[url(/${slug}/6.jpg)] bg-center bg-cover text-center}`}>
+         
+          <div className='absolute w-full h-full bg-black/40 z-10 top-0 left-0 inset-0'></div>
+          <div className='relative z-20 mb-10 text-center'>
+            <h2 className=" font-serif mb-5 text-neutral-100 text-xl">Hitung Mundur</h2>
+            <p className='font-great-vibes font-bold text-[#FFDBFD] font-bold text-5xl'>Menuju Hari Bahagia</p>
+          </div>
+
+          <div className="relative grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto z-20">
+            {[
+              { label: 'Days', value: timeLeft.days },
+              { label: 'Hours', value: timeLeft.hours },
+              { label: 'Minutes', value: timeLeft.minutes },
+              { label: 'Seconds', value: timeLeft.seconds },
+            ].map((item) => (
+              <motion.div
+                initial={{ opacity: 0, y: 100 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+                viewport={{ once: true }}
+                key={item.label}
+                className="transform-gpu rounded-3xl text-center p-10 border border-neutral-100 backdrop-blur-[2px]"
+              >
+                <h3 className="text-5xl font-bold text-[#FFDBFD] mb-2">
+                  {item.value}
+                </h3>
+
+                <p className="text-neutral-100 uppercase tracking-widest text-sm">
+                  {item.label}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
 
         {/* EVENT */}
         <motion.section
@@ -302,7 +318,7 @@ export default function Light({ slug }) {
                   <br />
                   {timeDate ? timeDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''} s/d Selesai
                   <br />
-                  {data?.reception_location || ''}
+                  {data?.reception_address || ''}
                 </p>
               </motion.div>
             </div>
@@ -310,7 +326,7 @@ export default function Light({ slug }) {
             <div id='location' className='w-full my-10'>
               <div className='w-full mb-10'>
                 <h2 className="font-serif text-xl my-2 text-neutral-100">Lokasi</h2>
-                <p className='font-serif font-bold text-[#FFDBFD] text-4xl my-3'>{data?.location || 'Jl. Balok, Lk 2,'}</p>
+                <p className='font-serif font-bold text-[#FFDBFD] text-4xl my-3'>{data?.reception_address || ''}</p>
                 <p className='font-serif text-neutral-100 text-sm'>{data?.address || ''}</p>
               </div>
               <motion.div
@@ -348,7 +364,7 @@ export default function Light({ slug }) {
               </div>
 
               <div className="grid md:grid-cols-3 grid-cols-2 gap-1">
-                {['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'].map((img) => (
+                {photoRow.map((img) => (
                   <motion.div
                     initial={{ opacity: 0, y: 100 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -357,8 +373,10 @@ export default function Light({ slug }) {
                     key={img}
                     className="overflow-hidden w-full rounded-lg"
                   >
-                    <img
-                      src={`/rian/${img}`}
+                    <Image
+                      width={500}
+                      height={500}
+                      src={`/${slug}/${img}.jpg`}
                       alt="Gallery"
                       className="w-full h-full object-cover hover:scale-110 transition duration-700"
                     />
