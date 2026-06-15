@@ -1,5 +1,6 @@
 import { themes } from "@/lib/db";
 import Light from "@/component/theme/light";
+import Jawa from "@/component/theme/jawa";
 import { notFound } from "next/navigation";
 import {supabase} from "@/lib/clientConnection";
 
@@ -42,12 +43,26 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
  const { theme, slug } = await params;
-  if (!themes.includes(theme)) {
-    notFound();
+ const { data, error } = await supabase
+      .from('wedding')
+      .select(`*`)
+      .eq('slug', slug)
+      .single();
+
+  if (error) {
+      console.log('Error fetching data:', error);
+      return notFound();
   }
+  
+  if(data.theme !== theme) {
+    return notFound();
+  }
+  
   switch (theme) {
     case 'light':
-      return <Light slug={ slug } />;
+      return <Light slug={slug} theme={theme} />;
+    case 'jawa':
+      return <Jawa slug={slug} theme={theme} />
     default:
       notFound();
   }

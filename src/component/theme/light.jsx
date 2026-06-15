@@ -16,6 +16,7 @@ export default function Light({ slug }) {
   const photoRow = Array.from({ length: photo}, (_, i) => i + 1);
   const timeLeft = useCountdown({ targetDate: data?.wedding_date });
   const [isCopy, setIsCopy] = useState(false);
+  const [id, setId] = useState('');
 
   if(!slugs.includes(slug)) {
     notFound();
@@ -28,7 +29,7 @@ export default function Light({ slug }) {
 
   function playAudio() {
     if (!audioRef.current) {
-      audioRef.current = new window.Audio('/music/music.mp3');
+      audioRef.current = new window.Audio('/light/music/music.mp3');
       audioRef.current.loop = true;
     }
 
@@ -93,13 +94,23 @@ export default function Light({ slug }) {
     }
   }
 
-    useEffect(() => {
+    useEffect(()=> {
+    if(data?.id) {
+        setForm((prev) => ({
+            ...prev,
+            wedding_id : data.id
+        }));
+        setId(data.id)
+    }
+  },[data])
 
+  useEffect(() => {
     async function getComments() {
 
       const { data, error } = await supabase
         .from('comments')
-        .select('*');
+        .select('*')
+        .eq('wedding_id', id);
 
       if (!error) {
         setUcapan(data);
@@ -108,7 +119,7 @@ export default function Light({ slug }) {
 
     getComments();
 
-  }, []);
+  }, [id]);
 
   return (
     <main className={`relative text-white h-screen w-full overflow-x-hidden ${isOpen ? 'overflow-y-scroll' : 'overflow-y-hidden'}`}>

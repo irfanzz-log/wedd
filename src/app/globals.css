@@ -19,6 +19,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-jawa: var(--font-jawa-font);
+
+
   --animate-float: float 10s ease-in-out infinite;
 }
 
