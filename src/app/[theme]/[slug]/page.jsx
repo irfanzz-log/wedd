@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import {supabase} from "@/lib/clientConnection";
 
 export async function generateMetadata({ params }) {
-  const { theme, slug } = await params;
+  const { slug } = await params;
   const { data, error } = await supabase
       .from('wedding')
       .select(`*`)
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }) {
       description: data?.story,
       images: [
         {
-          url: `/${theme}/${slug}/2.webp`,
+          url: `/${slug}/2.webp`,
           width: 1200,
           height: 630,
         },
