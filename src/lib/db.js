@@ -11,6 +11,6 @@ const themes = [
     'artistic'
 ]
 
-const slugs = ['ryanme-slug']
+const slugs = ['riyan-tri']
 
 export { themes, slugs };
