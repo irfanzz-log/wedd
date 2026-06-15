@@ -167,7 +167,7 @@ export default function Light({ slug }) {
         {/* HERO */}
         <div
           className={`relative h-screen flex items-center justify-center text-center px-6 transition-all duration-1000 ease-out ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
-          <div className={`absolute inset-0 bg-cover bg-center brightness-40`} style={{backgroundImage: `url('/${slug}/2.jpg')`}} />
+          <div className={`absolute inset-0 bg-cover bg-center brightness-40`} style={{backgroundImage: `url('/${slug}/2.webp')`}} />
 
           <div className="relative z-10">
 
@@ -297,7 +297,7 @@ export default function Light({ slug }) {
           transition={{ duration: 1 }}
           viewport={{ once: true }}
           className={`transform-gpu relative py-28 px-6 bg-center bg-cover text-center}`}
-          style={{ backgroundImage: `url('/${slug}/1.jpg')` }}
+          style={{ backgroundImage: `url('/${slug}/1.webp')` }}
           >
          
           <div className='absolute w-full h-full bg-black/40 z-10 top-0 left-0 inset-0'></div>
@@ -450,7 +450,7 @@ export default function Light({ slug }) {
                     <Image
                       width={500}
                       height={500}
-                      src={`/${slug}/${img}.jpg`}
+                      src={`/${slug}/${img}.webp`}
                       alt="Gallery"
                       className="w-full h-full object-cover hover:scale-110 transition duration-700"
                     />
