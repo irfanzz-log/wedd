@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import useCountdown from '../../hook/useCountdown';
 import useGetDataWedding from '../../hook/useGetDataWedding';
 import { notFound } from 'next/navigation';
+import { supabase } from '@/lib/clientConnection';
 import { slugs } from '@/lib/db';
 import Image from 'next/image';
 
@@ -14,6 +15,7 @@ export default function Light({ slug }) {
   const photo = data?.photo
   const photoRow = Array.from({ length: photo}, (_, i) => i + 1);
   const timeLeft = useCountdown({ targetDate: data?.wedding_date });
+  const [isCopy, setIsCopy] = useState(false);
 
   if(!slugs.includes(slug)) {
     notFound();
@@ -38,6 +40,76 @@ export default function Light({ slug }) {
     element.scrollIntoView({ behavior: 'smooth' });
   }
 
+  const handleCopyButton = async(text) => {
+    await navigator.clipboard.writeText(text);
+    setIsCopy(true);
+    setTimeout(() => {
+      setIsCopy(false);
+    }, 2000);
+  }
+
+  const [ucapan, setUcapan] = useState([]);
+  const [isActive, setIsActive] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    message: "",
+    status: "",
+    wedding_id: data?.id,
+  });
+
+  function formUpdate(e) {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }))
+  }
+
+  const [isWarning, setIsWarning] = useState();
+
+  async function handleFormButton(e) {
+    e.preventDefault();
+
+    setIsWarning(false);
+
+    if (!form.name || !form.message || !form.status) {
+      return setIsWarning(true);
+    }
+
+    const { data, error } = await supabase
+      .from('comments')
+      .insert([form])
+      .select();
+
+    if (!error) {
+
+      setUcapan((prev) => [...prev, data[0]]);
+
+      setForm({
+        name: "",
+        message: "",
+        status: "",
+        wedding_id: data?.id,
+      });
+    }
+  }
+
+    useEffect(() => {
+
+    async function getComments() {
+
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*');
+
+      if (!error) {
+        setUcapan(data);
+      }
+    }
+
+    getComments();
+
+  }, []);
+
   return (
     <main className={`relative text-white h-screen w-full overflow-x-hidden ${isOpen ? 'overflow-y-scroll' : 'overflow-y-hidden'}`}>
       <div className='fixed z-100 w-full mx-10 bottom-0 -left-10 p-5 flex md:hidden'>
@@ -48,7 +120,7 @@ export default function Light({ slug }) {
           <div onClick={() => scrollToSection('gallery')}><img src="https://indoinvite.com/nikah/picture.svg" alt="" className='w-5' /></div>
         </div>
       </div>
-      <div className="fixed -z-1 inset-0 bg-[url('/light/imagess.png')] bg-cover bg-no-repeat opacity-70 h-screen w-full" />
+      <div className="fixed -z-1 inset-0 bg-[url('/light/imagess.webp')] bg-cover bg-no-repeat opacity-70 h-screen w-full" />
 
       <motion.section
         initial={{ opacity: 0, y: 100 }}
@@ -83,7 +155,7 @@ export default function Light({ slug }) {
             <button
               type='button'
               onClick={() => { setIsOpen(!isOpen); playAudio(); }}
-              className='hover:scale-110 my-2 flex items-center p-2 rounded-lg bg-[#FFDBFD] text-black font-serif'><span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-envelope-open" viewBox="0 0 16 16">
+              className='hover:scale-110 my-2 flex items-center p-2 rounded-lg bg-white text-black font-serif'><span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-envelope-open" viewBox="0 0 16 16">
                 <path d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.817l5.75 3.45L8 8.917l1.25.75L15 6.217V5.4a1 1 0 0 0-.53-.882zM15 7.383l-4.778 2.867L15 13.117zm-.035 6.88L8 10.082l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738ZM1 13.116l4.778-2.867L1 7.383v5.734ZM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765z" />
               </svg></span><span className='mx-2 text-sm'>Buka Undangan</span></button>
           </div>
@@ -124,7 +196,7 @@ export default function Light({ slug }) {
         {/* QUOTE */}
         <div className='relative overflow-hidden bg-white'>
           <div className='w-full flex justify-between'>
-            <img src="/flower.png" alt="" className='w-full -scale-x-100 animate-zoom [animation-delay:0.3s]' />
+            <img src="/light/flower.png" alt="" className='w-full -scale-x-100 animate-zoom [animation-delay:0.3s]' />
           </div>
 
           <motion.section
@@ -224,7 +296,9 @@ export default function Light({ slug }) {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
           viewport={{ once: true }}
-          className={`transform-gpu relative py-28 px-6 bg-[url(/${slug}/6.jpg)] bg-center bg-cover text-center}`}>
+          className={`transform-gpu relative py-28 px-6 bg-center bg-cover text-center}`}
+          style={{ backgroundImage: `url('/${slug}/1.jpg')` }}
+          >
          
           <div className='absolute w-full h-full bg-black/40 z-10 top-0 left-0 inset-0'></div>
           <div className='relative z-20 mb-10 text-center'>
@@ -316,7 +390,7 @@ export default function Light({ slug }) {
                   <br /> <span className='text-5xl font-bold text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { day: 'numeric' }) : ''}</span>
                   <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', day: 'numeric' }) : ''}</span>
                   <br />
-                  {timeDate ? timeDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''} s/d Selesai
+                  {data?.reception_date ? new Date(data.reception_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''} s/d Selesai
                   <br />
                   {data?.reception_address || ''}
                 </p>
@@ -326,8 +400,8 @@ export default function Light({ slug }) {
             <div id='location' className='w-full my-10'>
               <div className='w-full mb-10'>
                 <h2 className="font-serif text-xl my-2 text-neutral-100">Lokasi</h2>
-                <p className='font-serif font-bold text-[#FFDBFD] text-4xl my-3'>{data?.reception_address || ''}</p>
-                <p className='font-serif text-neutral-100 text-sm'>{data?.address || ''}</p>
+                <p className='font-serif font-bold text-[#FFDBFD] text-4xl my-3'>{data?.venue || ''}</p>
+                <p className='font-serif text-neutral-100 text-sm'>{data?.reception_address || ''}</p>
               </div>
               <motion.div
                 initial={{ opacity: 0, y: 100 }}
@@ -335,7 +409,7 @@ export default function Light({ slug }) {
                 transition={{ duration: 1 }}
                 viewport={{ once: true }}
                 className='w-full'>
-                <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3971.9234468971013!2d105.28799807498422!3d-5.428599994550717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNcKwMjUnNDMuMCJTIDEwNcKwMTcnMjYuMSJF!5e0!3m2!1sid!2sid!4v1780201502828!5m2!1sid!2sid"
+                <iframe src={`${data?.maps_link || null}`}
                   className='w-full h-100'
                   allowFullScreen=""
                   loading="lazy"
@@ -404,27 +478,100 @@ export default function Light({ slug }) {
 
             <div className="relative z-20">
               <div className='w-full md:flex-row flex-col'>
-                <div className='relative my-5 text-[#505050] bg-white p-5 rounded-xl'>
-                  <div className='w-full flex justify-center my-2'>
-                    <img src="/mandiri.png" alt="" className='md:w-1/6 w-3/4' />
+                {data?.bank_account?.map((account, index) => (
+                  <div key={index} className='relative my-5 text-[#505050] bg-white p-5 rounded-xl'>
+                    <div className='w-full flex justify-center my-2'>
+                      <img src={`/${account.bank_name}.svg`} alt={account.bank_name} className='md:w-1/6 w-3/4' />
+                    </div>
+                    <p className='text-lg font-bold'>{account.no_bank_account} <span onClick={() => handleCopyButton(account.no_bank_account)} className='hover:underline cursor-pointer text-sm font-normal bg-blue-100 px-2 py-1 rounded'>Copy</span></p>
+                    <p className='text-sm'>A/N {account.account_bank_name}</p>
                   </div>
-                  <p className='text-lg'>1140026390594</p>
-                  <p className='text-sm'>A/N Pria</p>
-                </div>
-
-                <div className='relative my-5 text-[#505050] bg-white p-5 rounded-xl'>
-                  <div className='w-full flex justify-center my-2'>
-                    <img src="/bca.svg" alt="" className='md:w-1/6 w-3/4' />
+                ))}
+                  <div className={`fixed w-full top-5 left-0 flex justify-center items-center z-50 ${isCopy ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-20 pointer-events-none'} transition-all duration-300 ease-in-out`}>
+                    <p className="bg-green-500 text-white p-2 text-xs rounded-lg shadow-lg">Text copied to clipboard!</p>
                   </div>
-                  <p className='text-lg'>0231309763 </p>
-                  <p className='text-sm'>A/N Wanita</p>
-                </div>
+                
               </div>
             </div>
           </motion.div>
         </section>
 
+        <motion.section
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+          className="py-28 px-6 bg-neutral-950">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className='relative z-20 mb-10'>
+              <h2 className="font-serif text-xl my-2 text-neutral-100">Doa & Ucapan</h2>
+              <p className='font-great-vibes font-bold text-[#FFDBFD] text-4xl'>Untuk Kami Berdua</p>
+              <p className='font-serif text-neutral-100 md:text-lg text-sm'>Merupakan suatu kehormatan dan kebahagiaan bagi kami sekeluarga, apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu. Atas kehadiran dan doa restunya, kami mengucapkan terima kasih.</p>
+            </div>
 
+            <div className="relative flex justify-center">
+              <form onSubmit={handleFormButton} className='flex w-full flex-col font-serif text-[#505050]'>
+                <input name='name' type="text" placeholder='Nama' className='w-full bg-white p-2 rounded-md my-1' value={form?.name} onChange={formUpdate} />
+                <textarea name="message" id="" placeholder='Beri ucapan' className='text- w-full bg-white p-2 rounded-md my-1 resize-none' value={form?.message} onChange={formUpdate}></textarea>
+                <div className='relative w-full my-1'>
+                  <div name="status" className='p-2 bg-white rounded-md p-2 hover:bg-gray-100 cursor-pointer' value={form?.status} onClick={(() => setIsActive(!isActive))}>{form.status || 'Status Kehadiran'}</div>
+                  <div className={`z-2 shadow-md absolute flex-col bg-white w-full -bottom-22 rounded-md left-0 ${isActive ? 'flex' : 'hidden'}`}>
+                    <button type='button' className='w-full p-2 hover:bg-gray-100 cursor-pointer' onClick={() => {
+                      setForm((prev) => ({
+                        ...prev,
+                        status: 'Hadir',
+                      }));
+
+                      setIsActive(false);
+                    }}>Hadir</button>
+                    <button type='button' className='w-full p-2 hover:bg-gray-100 cursor-pointer' onClick={() => {
+                      setForm((prev) => ({
+                        ...prev,
+                        status: 'Tidak Hadir',
+                      }));
+
+                      setIsActive(false);
+                    }}>Tidak Hadir</button>
+                  </div>
+                </div>
+                {isWarning && <p className='text-red-700'>Harap Lengkapi form!</p>}
+                <button className='hover:scale-110 transition-all duration-400 ease-out w-1/2 bg-[#FFDBFD] text-black p-2 rounded-md my-1'>Kirim Ucapan</button>
+              </form>
+            </div>
+
+            <div className='relative w-full my-1'>
+              <div className='w-full flex flex-col bg-white rounded-md overflow-hidden'>
+                <div className='text-left font-serif p-2 px-4 w-full bg-[#FFDBFD]'>
+                  <p className='flex items-center text-black'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chat-left-text" viewBox="0 0 16 16">
+                    <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                    <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5" />
+                  </svg><span className='mx-2'>Coments</span></p>
+                </div>
+                {ucapan.map((data, idx) => {
+                  const name = data.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                  return (
+                    <div key={idx} className='w-full flex text-left text-black p-2 my-2'>
+                      <div className='w-1/5 md:w-1/8'>
+                        <div className='w-15 h-15 flex items-center justify-center border-[0.5px] border-[#FFDBFD] rounded-full overflow-hidden'>
+                          <p>{name}</p>
+                        </div>
+                      </div>
+                      <div className='w-full p-2'>
+                        <div className='w-full flex items-center'>
+                          <p className='font-bold'>{data.name}</p>
+                          <p className='mx-3 p-1 px-2 text-xs text-black bg-[#FFDBFD] rounded-lg'>{data.status}</p>
+                        </div>
+                        <div>
+                          <p className='text-sm'>{data.message}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </motion.section>
 
         {/* FOOTER */}
         <footer className="py-10 text-center bg-black border-t border-neutral-900 pb-40">
