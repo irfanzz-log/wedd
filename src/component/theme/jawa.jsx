@@ -7,6 +7,7 @@ import useGetDataWedding from '@/hook/useGetDataWedding';
 import { supabase } from '@/lib/clientConnection';
 import { slugs } from '@/lib/db';
 import { notFound } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export default function Jawa({ slug }) {
     const data = useGetDataWedding(slug);
@@ -15,6 +16,8 @@ export default function Jawa({ slug }) {
     const audioRef = useRef(null);
     const [isCopy, setIsCopy] = useState();
     const [id, setId] = useState();
+    const searchParams = useSearchParams();
+    const tamu = searchParams.get('tamu');
 
     if(!slugs.includes(slug)) {
     notFound();
@@ -139,13 +142,13 @@ export default function Jawa({ slug }) {
 
                 <div className="relative w-full z-10 flex-col items-center justify-center">
                     <div className='w-full flex justify-center my-2'>
-                        <img src="/gunungan-wayang.png" alt="" className='md:w-1/6 w-1/4' />
+                        <img src="/jawa/gunungan-wayang.png" alt="" className='md:w-1/8 w-1/4' />
                     </div>
                     <p className="tracking-[0.4em] uppercase text-sm mb-4 text-neutral-300">
                         Wedding Invitation
                     </p>
 
-                    <h1 className="text-6xl md:text-8xl font-serif mb-6 text-[#B18B41]">
+                    <h1 className="text-4xl md:text-8xl font-serif mb-6 text-[#B18B41]">
                         {data?.groom_name || 'Groom Name'} <span className="">&</span> {data?.bride_name || 'Bride Name'}
                     </h1>
 
@@ -158,7 +161,7 @@ export default function Jawa({ slug }) {
                     </p>
 
                     <p className='text-serif text-sm  text-neutral-200 text-xs md:text-lg'>Kepada Yth. Bapak/Ibu/Saudara/i</p>
-                    <p className='font-jawa text-[#B18B41] md:text-5xl text-4xl my-3'>M Irfansyah</p>
+                    <p className='font-jawa text-[#B18B41] md:text-5xl text-4xl my-3'>{tamu || 'Tamu Undangan'}</p>
                     <div className='w-full flex justify-center items-center'>
                         <button
                             type='button'
@@ -187,7 +190,7 @@ export default function Jawa({ slug }) {
                             viewport={{ once: true }}>
 
                             <div className='w-full flex justify-center my-2'>
-                                <img src="/jawa/gunungan-wayang.png" alt="" className='w-1/4' />
+                                <img src="/jawa/gunungan-wayang.png" alt="" className='md:w-1/8 w-1/4' />
                             </div>
 
                             <p className="tracking-[0.4em] uppercase text-sm mb-4 text-neutral-300">
@@ -200,7 +203,7 @@ export default function Jawa({ slug }) {
                             whileInView={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 1 }}
                             viewport={{ once: true }}>
-                            <h1 className="text-6xl md:text-8xl font-serif mb-6 text-[#B18B41]">
+                            <h1 className="text-4xl md:text-8xl font-serif mb-6 text-[#B18B41]">
                                 {data?.groom_name || 'Groom Name'} <span className="">&</span> {data?.bride_name || 'Bride Name'}
                             </h1>
                         </motion.div>
