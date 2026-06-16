@@ -10,7 +10,7 @@ export default function useGetDataWedding(slug) {
         async function fetchData() {
             const { data, error } = await supabase
                 .from('wedding')
-                .select(`*, bank_account(*)`)
+                .select(`*, bank_account(*), couples(*)`)
                 .eq('slug', slug)
                 .single();
 

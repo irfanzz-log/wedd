@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/clientConnection';
 import { slugs } from '@/lib/db';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 
 export default function Light({ slug }) {
 
@@ -17,6 +18,8 @@ export default function Light({ slug }) {
   const timeLeft = useCountdown({ targetDate: data?.wedding_date });
   const [isCopy, setIsCopy] = useState(false);
   const [id, setId] = useState('');
+  const searchParams = useSearchParams();
+  const tamu = searchParams.get('tamu');
 
   if(!slugs.includes(slug)) {
     notFound();
@@ -148,7 +151,7 @@ export default function Light({ slug }) {
           </p>
 
           <h1 className="text-6xl md:text-8xl font-serif mb-6 text-black">
-            {data?.groom_name || 'Groom Name'} <span className="">&</span> {data?.bride_name || 'Bride Name'}
+            {data?.couples[0].groom_alias || 'Groom Name'} <span className="">&</span> {data?.couples[0].bride_alias || 'Bride Name'}
           </h1>
 
           <p className="text-lg text-black mb-8">
@@ -161,7 +164,7 @@ export default function Light({ slug }) {
           </p>
 
           <p className='text-serif text-sm  text-black text-xs md:text-lg'>Kepada Yth. Bapak/Ibu/Saudara/i</p>
-
+          <p className='text-black md:text-3xl text-2xl my-3 font-bold'>{tamu || 'Tamu Undangan'}</p>
           <div className='w-full flex justify-center items-center'>
             <button
               type='button'
@@ -187,7 +190,7 @@ export default function Light({ slug }) {
             </p>
 
             <h1 className="text-6xl md:text-8xl font-serif mb-6 text-[#FFDBFD] drop-shadow-xl">
-              {data?.groom_name || 'Groom Name'} <span className="">&</span> {data?.bride_name || 'Bride Name'}
+              {data?.couples[0].groom_alias || 'Groom Name'} <span className="">&</span> {data?.couples[0].bride_alias || 'Bride Name'}
             </h1>
 
             <p className="text-lg text-[#FFDBFD] mb-8 drop-shadow-xl">
@@ -265,12 +268,12 @@ export default function Light({ slug }) {
                   </div>
                 </div>
 
-                <h2 className="text-3xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.groom_name || 'Groom Name'}</h2>
+                <h2 className="text-3xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.couples[0].groom_name || 'Groom Name'}</h2>
                 <div className='w-full flex justify-center'>
                   <div className='w-3/4 p-[0.2px] rounded-xl my-2 bg-black'>
                   </div>
                 </div>
-                <p className='text-[#505050] font-serif'>{data?.groom_info || ''}</p>
+                <p className='text-[#505050] font-serif'>{data?.couples[0].groom_info || ''}</p>
               </motion.div>
 
               {/* Bride */}
@@ -291,12 +294,12 @@ export default function Light({ slug }) {
                   </div>
                 </div>
 
-                <h2 className="text-4xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.bride_name || ''}</h2>
+                <h2 className="text-4xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.couples[0].bride_name || ''}</h2>
                 <div className='w-full flex justify-center'>
                   <div className='w-3/4 p-[0.2px] rounded-xl my-2 bg-black'>
                   </div>
                 </div>
-                <p className='text-[#505050] font-serif'>{data?.bride_info || ''}</p>
+                <p className='text-[#505050] font-serif'>{data?.couples[0].bride_info || ''}</p>
               </motion.div>
             </div>
           </motion.section>
@@ -375,9 +378,9 @@ export default function Light({ slug }) {
                 <p className="text-neutral-200 font-serif leading-8">
                   Saturday
                   <br /> <span className='text-5xl font-bold text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { day: 'numeric' }) : ''}</span>
-                  <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', day: 'numeric' }) : ''}</span>
+                  <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', }) : ''}</span>
                   <br />
-                  {timeDate ? timeDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''} s/d selesai
+                  {timeDate ? timeDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : ''} s/d selesai
                   <br />
                   {data?.marriage_covenant_address || ''}
                 </p>
@@ -399,9 +402,9 @@ export default function Light({ slug }) {
                 <p className="text-neutral-200 font-serif leading-8">
                   Saturday
                   <br /> <span className='text-5xl font-bold text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { day: 'numeric' }) : ''}</span>
-                  <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', day: 'numeric' }) : ''}</span>
+                  <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long' }) : ''}</span>
                   <br />
-                  {data?.reception_date ? new Date(data.reception_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''} s/d Selesai
+                  {data?.reception_date ? new Date(data.reception_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : ''} s/d {data?.reception_date_end ? new Date(data.reception_date_end).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : 'Selesai'}
                   <br />
                   {data?.reception_address || ''}
                 </p>
@@ -492,10 +495,10 @@ export default function Light({ slug }) {
                 {data?.bank_account?.map((account, index) => (
                   <div key={index} className='relative my-5 text-[#505050] bg-white p-5 rounded-xl'>
                     <div className='w-full flex justify-center my-2'>
-                      <img src={`/${account.bank_name}.svg`} alt={account.bank_name} className='md:w-1/6 w-3/4' />
+                      <img src={`/${account.bank}.svg`} alt={account.bank} className='md:w-1/6 w-3/4' />
                     </div>
-                    <p className='text-lg font-bold'>{account.no_bank_account} <span onClick={() => handleCopyButton(account.no_bank_account)} className='hover:underline cursor-pointer text-sm font-normal bg-blue-100 px-2 py-1 rounded'>Copy</span></p>
-                    <p className='text-sm'>A/N {account.account_bank_name}</p>
+                    <p className='text-lg font-bold'>{account.bank_number} <span onClick={() => handleCopyButton(account.bank_number)} className='hover:underline cursor-pointer text-sm font-normal bg-blue-100 px-2 py-1 rounded'>Copy</span></p>
+                    <p className='text-sm'>A/N {account.account_name}</p>
                   </div>
                 ))}
                   <div className={`fixed w-full top-5 left-0 flex justify-center items-center z-50 ${isCopy ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-20 pointer-events-none'} transition-all duration-300 ease-in-out`}>
