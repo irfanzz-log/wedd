@@ -623,7 +623,7 @@ export default function Jawa({ slug }) {
                                     return (
                                         <div key={idx} className='w-full flex text-left text-black p-2 my-2'>
                                             <div className='w-1/5 md:w-1/8'>
-                                                <div className='w-15 h-15 flex items-center justify-center border-[1px] border-[#FFDBFD] rounded-full overflow-hidden'>
+                                                <div className='w-15 h-15 flex items-center justify-center border-[1px] border-[#B18B41] rounded-full overflow-hidden'>
                                                     <p>{name}</p>
                                                 </div>
                                             </div>
