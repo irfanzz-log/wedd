@@ -259,7 +259,7 @@ export default function Light({ slug }) {
                 className="transform-gpu text-center">
                 <div className="relative w-46 h-46 mx-auto mb-8">
                   <img
-                    src={`/${slug}/men.png`}
+                    src={`/${slug}/men.webp`}
                     alt="Groom"
                     className="w-full h-full object-cover rounded-full"
                   />
@@ -285,7 +285,7 @@ export default function Light({ slug }) {
                 className="transform-gpu text-center">
                 <div className="relative w-46 h-46 mx-auto mb-8">
                   <img
-                    src={`/${slug}/girl.png`}
+                    src={`/${slug}/girl.webp`}
                     alt="Bride"
                     className="w-full h-full object-cover rounded-full"
                   />
@@ -378,7 +378,7 @@ export default function Light({ slug }) {
                 <p className="text-neutral-200 font-serif leading-8">
                   Saturday
                   <br /> <span className='text-5xl font-bold text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { day: 'numeric' }) : ''}</span>
-                  <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', }) : ''}</span>
+                  <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric'}) : ''}</span>
                   <br />
                   {timeDate ? timeDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : ''} s/d selesai
                   <br />
@@ -402,7 +402,7 @@ export default function Light({ slug }) {
                 <p className="text-neutral-200 font-serif leading-8">
                   Saturday
                   <br /> <span className='text-5xl font-bold text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { day: 'numeric' }) : ''}</span>
-                  <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long' }) : ''}</span>
+                  <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) : ''}</span>
                   <br />
                   {data?.reception_date ? new Date(data.reception_date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : ''} s/d {data?.reception_date_end ? new Date(data.reception_date_end).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' : 'Selesai'}
                   <br />
