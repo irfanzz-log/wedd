@@ -32,7 +32,7 @@ export default function Light({ slug }) {
 
   function playAudio() {
     if (!audioRef.current) {
-      audioRef.current = new window.Audio('/light/music/music.mp3');
+      audioRef.current = new window.Audio('/light/music/song.mp3');
       audioRef.current.loop = true;
     }
 
