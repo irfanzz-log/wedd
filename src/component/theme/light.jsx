@@ -376,7 +376,7 @@ export default function Light({ slug }) {
                 </h3>
 
                 <p className="text-neutral-200 font-serif leading-8">
-                  Saturday
+                  {timeDate ? timeDate.toLocaleDateString('id-ID', {weekday: 'long'}) : ''}
                   <br /> <span className='text-5xl font-bold text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { day: 'numeric' }) : ''}</span>
                   <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric'}) : ''}</span>
                   <br />
@@ -400,7 +400,7 @@ export default function Light({ slug }) {
                 </h3>
 
                 <p className="text-neutral-200 font-serif leading-8">
-                  Saturday
+                  {timeDate ? timeDate.toLocaleDateString('id-ID', {weekday: 'long'}) : ''}
                   <br /> <span className='text-5xl font-bold text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { day: 'numeric' }) : ''}</span>
                   <br /> <span className='text-[#FFDBFD]'>{timeDate ? timeDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) : ''}</span>
                   <br />
