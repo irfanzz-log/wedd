@@ -15,7 +15,7 @@ export default function Light({ slug }) {
   const data = useGetDataWedding(slug);
   const photo = data?.photo
   const photoRow = Array.from({ length: photo}, (_, i) => i + 1);
-  const timeLeft = useCountdown({ targetDate: data?.wedding_date });
+  const timeLeft = useCountdown({ targetDate: data?.wedding_date }) || {};
   const [isCopy, setIsCopy] = useState(false);
   const [id, setId] = useState('');
   const searchParams = useSearchParams();
@@ -44,13 +44,18 @@ export default function Light({ slug }) {
     element.scrollIntoView({ behavior: 'smooth' });
   }
 
-  const handleCopyButton = async(text) => {
+const handleCopyButton = async(text) => {
+  try {
     await navigator.clipboard.writeText(text);
     setIsCopy(true);
-    setTimeout(() => {
-      setIsCopy(false);
-    }, 2000);
+  } catch(err) {
+    console.log(err);
   }
+
+  setTimeout(() => {
+    setIsCopy(false);
+  },2000)
+}
 
   const [ucapan, setUcapan] = useState([]);
   const [isActive, setIsActive] = useState(false);
@@ -151,7 +156,7 @@ export default function Light({ slug }) {
           </p>
 
           <h1 className="text-6xl md:text-8xl font-serif mb-6 text-black">
-            {data?.couples[0].groom_alias || 'Groom Name'} <span className="">&</span> {data?.couples[0].bride_alias || 'Bride Name'}
+            {data?.couples?.[0]?.groom_alias || 'Groom Name'} <span className="">&</span> {data?.couples?.[0]?.bride_alias || 'Bride Name'}
           </h1>
 
           <p className="text-lg text-black mb-8">
@@ -190,7 +195,7 @@ export default function Light({ slug }) {
             </p>
 
             <h1 className="text-6xl md:text-8xl font-serif mb-6 text-[#FFDBFD] drop-shadow-xl">
-              {data?.couples[0].groom_alias || 'Groom Name'} <span className="">&</span> {data?.couples[0].bride_alias || 'Bride Name'}
+              {data?.couples?.[0]?.groom_alias || 'Groom Name'} <span className="">&</span> {data?.couples?.[0]?.bride_alias || 'Bride Name'}
             </h1>
 
             <p className="text-lg text-[#FFDBFD] mb-8 drop-shadow-xl">
@@ -268,12 +273,12 @@ export default function Light({ slug }) {
                   </div>
                 </div>
 
-                <h2 className="text-3xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.couples[0].groom_name || 'Groom Name'}</h2>
+                <h2 className="text-3xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.couples?.[0]?.groom_name || 'Groom Name'}</h2>
                 <div className='w-full flex justify-center'>
                   <div className='w-3/4 p-[0.2px] rounded-xl my-2 bg-black'>
                   </div>
                 </div>
-                <p className='text-[#505050] font-serif'>{data?.couples[0].groom_info || ''}</p>
+                <p className='text-[#505050] font-serif'>{data?.couples?.[0]?.groom_info || ''}</p>
               </motion.div>
 
               {/* Bride */}
@@ -294,12 +299,12 @@ export default function Light({ slug }) {
                   </div>
                 </div>
 
-                <h2 className="text-4xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.couples[0].bride_name || ''}</h2>
+                <h2 className="text-4xl font-great-vibes font-bold text-[#FFDBFD] mb-3">{data?.couples?.[0]?.bride_name || ''}</h2>
                 <div className='w-full flex justify-center'>
                   <div className='w-3/4 p-[0.2px] rounded-xl my-2 bg-black'>
                   </div>
                 </div>
-                <p className='text-[#505050] font-serif'>{data?.couples[0].bride_info || ''}</p>
+                <p className='text-[#505050] font-serif'>{data?.couples?.[0]?.bride_info || ''}</p>
               </motion.div>
             </div>
           </motion.section>
