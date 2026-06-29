@@ -27,7 +27,7 @@ export async function generateMetadata({ params }) {
     description: data?.description,
 
     openGraph: {
-      title: `${slug} | Wedding Invitation`,
+      title: `Riyan-Okta | Wedding Invitation`,
       description: data?.story,
       images: [
         {
