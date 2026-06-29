@@ -11,6 +11,6 @@ const themes = [
     'artistic'
 ]
 
-const slugs = ['riyan-tri', 'noval-latifah']
+const slugs = ['riyan-okta', 'noval-latifah']
 
 export { themes, slugs };
